@@ -14,6 +14,19 @@
 ## Структура проекта
 
 *   **`backend/`**
+backend/
+├── main.py               # FastAPI, подключение маршрутов
+├── config.py             #
+├── models/               #
+│   └── ...
+├── services/             # Логика приложения
+│   ├── __init__.py       #
+│   ├── file_processor.py # process_csv_placeholder
+│   └── task_manager.py   # processing_tasks, стату
+├── api/                  # роутеры FastAPI
+│   ├── __init__.py       #
+│   └── routes.py         # @app.post("/upload"), @app.get("/status"), @app.get("/download")
+└── requirements.txt      # Зависимости для backend (fastapi, uvicorn, pandas, numpy)
 *   **`frontend/`**
 
 ## Задачи (To-Do)
@@ -24,6 +37,7 @@
     - [ ] Реализовать endpoint `/download` для выдачи обработанного CSV
     - [ ] Создать `Dockerfile` для backend
     - [ ] Добавить логику обработки ошибок (валидация файла и т.д.)
+    - [ ] Логика хранения задач - сейчас processing_tasks -> Redis? Bd?
 - [ ] **Frontend:**
     - [ ] Инициализировать React-app
     - [ ] добавить Gravity UI
