@@ -15,6 +15,7 @@
 
 *   **`backend/`**
 backend/
+```
 ├── main.py               # FastAPI, подключение маршрутов
 ├── config.py             #
 ├── models/               #
@@ -27,6 +28,7 @@ backend/
 │   ├── __init__.py       #
 │   └── routes.py         # @app.post("/upload"), @app.get("/status"), @app.get("/download")
 └── requirements.txt      # Зависимости для backend (fastapi, uvicorn, pandas, numpy)
+```
 *   **`frontend/`**
 
 ## Задачи (To-Do)
