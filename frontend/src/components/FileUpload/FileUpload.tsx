@@ -3,7 +3,7 @@ import { Button, Group, rem, Text } from '@mantine/core';
 import { Dropzone, type FileWithPath } from '@mantine/dropzone';
 import { IconCheck, IconUpload, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
-import './FileUpload.css';
+import './FileUpload.scss';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -90,7 +90,7 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
               Перетащите CSV файл сюда или нажмите для выбора
             </Text>
             <Text size="sm" c="dimmed" inline mt={7}>
-              Файл должен быть в формате CSV, размером не более 30МБ
+              Файл должен быть в формате CSV
             </Text>
           </div>
         </Group>
