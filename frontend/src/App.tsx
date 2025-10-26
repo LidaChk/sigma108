@@ -56,7 +56,7 @@ export default function App() {
         <Notifications />
 
         <Card shadow="md" p="xl" radius="md" withBorder className="neo-card">
-          <Stack>
+          <Card.Section p="xl">
             <Title
               order={1}
               mb="md"
@@ -66,10 +66,16 @@ export default function App() {
             >
               Автоматическая оценка ответов на экзамене
             </Title>
-            <Text mb="xl" ta="center" c="dimmed" className="neo-text-balanced">
+            <Text
+              mb="xl"
+              ta="center"
+              c="dark"
+              size="md"
+              className="neo-text-balanced"
+            >
               Загрузите CSV файл с ответами для автоматической оценки
             </Text>
-          </Stack>
+          </Card.Section>
           {status === 'idle' && (
             <FileUpload onFileUpload={handleFileUpload} isUploading={false} />
           )}

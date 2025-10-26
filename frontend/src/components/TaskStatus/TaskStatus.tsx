@@ -1,4 +1,3 @@
-
 import { Alert, Progress, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -25,7 +24,6 @@ export function TaskStatus({
         const response = await getTaskStatus(taskId);
         setStatus(response.status);
 
-        // Обновление прогресса в зависимости от статуса
         if (response.status === 'created') setProgress(10);
         if (response.status === 'processing') setProgress(50);
         if (response.status === 'completed') {
@@ -55,17 +53,22 @@ export function TaskStatus({
 
   return (
     <div>
-      <Text size="lg" mb="sm">
+      <Text size="lg" mb="sm" c="dark">
         {statusText[status]}
       </Text>
-      <Progress value={progress} size="lg" radius="xl" mb="sm" />
+      <Progress value={progress} size="lg" radius="md" mb="sm" />
       <Alert
         icon={<IconInfoCircle size="1rem" />}
         title="Информация"
         color="blue"
         className="neo-alert"
       >
-        Идентификатор задачи: {taskId}
+        <Text size="sm" c="dark">
+          Идентификатор задачи: {taskId}
+        </Text>
+        <Text size="xs" c="dimmed" mt="xs">
+          Обновление статуса каждые 2 секунды.
+        </Text>
       </Alert>
     </div>
   );

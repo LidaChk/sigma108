@@ -1,5 +1,4 @@
-// components/FileUpload/FileUpload.tsx
-import { Button, Group, rem, Text } from '@mantine/core';
+import { Button, Group, rem, Stack, Text } from '@mantine/core';
 import { Dropzone, type FileWithPath } from '@mantine/dropzone';
 import { IconCheck, IconCloudUpload, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -44,17 +43,16 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
   return (
     <div>
       <Dropzone
-        variant="filled" // default, filled, light, outline, subtle, transparent
+        variant="filled"
         onDrop={handleDrop}
         onReject={(files) => console.log('rejected files', files)}
         accept={['text/csv']}
         disabled={isUploading}
         className="neobrutal-dropzone"
       >
-        <Group
+        <Stack
           justify="center"
-          gap="xl"
-          mih={220}
+          align="center"
           style={{ pointerEvents: 'none' }}
         >
           <Dropzone.Accept>
@@ -91,14 +89,14 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
           </Dropzone.Idle>
 
           <div className="file-upload-text">
-            <Text size="xl" inline className="neo-text-balanced">
+            <Text size="xl" ta="center" inline className="neo-text-balanced">
               Перетащите CSV файл сюда или нажмите для выбора
             </Text>
-            <Text size="sm" c="dimmed" inline mt={7}>
+            <Text size="sm" ta="center" c="dark" inline mt={7}>
               Файл должен быть в формате CSV
             </Text>
           </div>
-        </Group>
+        </Stack>
       </Dropzone>
 
       <input

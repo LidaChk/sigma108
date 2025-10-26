@@ -1,4 +1,4 @@
-import { Alert, Button, Group } from '@mantine/core';
+import { Alert, Button, Group, Text } from '@mantine/core';
 import { IconDownload, IconRefresh } from '@tabler/icons-react';
 import { useState } from 'react';
 import { downloadResult } from '../../api/client';
@@ -33,10 +33,12 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
   return (
     <div>
       <Alert title="Обработка завершена!" color="green" className="neo-alert">
-        Файл успешно обработан. Вы можете скачать результаты.
+        <Text size="sm" c="dark">
+          Файл успешно обработан. Вы можете скачать результаты в формате CSV.
+        </Text>
       </Alert>
 
-      <Group mt="md">
+      <Group mt="md" justify="center">
         <Button
           leftSection={<IconDownload size={14} />}
           onClick={handleDownload}

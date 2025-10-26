@@ -84,6 +84,17 @@ const theme = createTheme({
         radius: 'md',
       },
     },
+    Alert: {
+      defaultProps: {
+        radius: 'md',
+        shadow: 'md',
+      },
+    },
+    Progress: {
+      defaultProps: {
+        radius: 'md',
+      },
+    },
   },
 });
 
