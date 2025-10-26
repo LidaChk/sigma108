@@ -63,6 +63,7 @@ export function TaskStatus({
         icon={<IconInfoCircle size="1rem" />}
         title="Информация"
         color="blue"
+        className="neo-alert"
       >
         Идентификатор задачи: {taskId}
       </Alert>

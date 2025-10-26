@@ -32,7 +32,7 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
 
   return (
     <div>
-      <Alert title="Обработка завершена!" color="green">
+      <Alert title="Обработка завершена!" color="green" className="neo-alert">
         Файл успешно обработан. Вы можете скачать результаты.
       </Alert>
 
@@ -41,6 +41,7 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
           leftSection={<IconDownload size={14} />}
           onClick={handleDownload}
           loading={isDownloading}
+          className="neo-button-filled"
         >
           Скачать результаты
         </Button>
@@ -48,6 +49,7 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
           variant="outline"
           leftSection={<IconRefresh size={14} />}
           onClick={onNewUpload}
+          className="neo-button-outline"
         >
           Обработать новый файл
         </Button>

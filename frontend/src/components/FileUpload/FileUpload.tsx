@@ -1,9 +1,8 @@
 // components/FileUpload/FileUpload.tsx
 import { Button, Group, rem, Text } from '@mantine/core';
 import { Dropzone, type FileWithPath } from '@mantine/dropzone';
-import { IconCheck, IconUpload, IconX } from '@tabler/icons-react';
+import { IconCheck, IconCloudUpload, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
-import './FileUpload.scss';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -15,6 +14,13 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
 
   const handleDrop = (files: FileWithPath[]) => {
     if (files.length > 0) {
+      setFile(files[0]);
+    }
+  };
+
+  const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
       setFile(files[0]);
     }
   };
@@ -36,14 +42,14 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
   };
 
   return (
-    <div className="file-upload-container">
+    <div>
       <Dropzone
+        variant="filled" // default, filled, light, outline, subtle, transparent
         onDrop={handleDrop}
         onReject={(files) => console.log('rejected files', files)}
-        maxSize={30 * 1024 * 1024}
         accept={['text/csv']}
         disabled={isUploading}
-        className="file-upload-dropzone"
+        className="neobrutal-dropzone"
       >
         <Group
           justify="center"
@@ -74,19 +80,18 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
             />
           </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconUpload
-              className="file-upload-icon"
+            <IconCloudUpload
               style={{
                 width: rem(52),
                 height: rem(52),
-                color: 'var(--mantine-color-dimmed)',
+                color: 'var(--mantine-color-myColor-5)',
               }}
               stroke={1.5}
             />
           </Dropzone.Idle>
 
           <div className="file-upload-text">
-            <Text size="xl" inline>
+            <Text size="xl" inline className="neo-text-balanced">
               Перетащите CSV файл сюда или нажмите для выбора
             </Text>
             <Text size="sm" c="dimmed" inline mt={7}>
@@ -95,6 +100,15 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
           </div>
         </Group>
       </Dropzone>
+
+      <input
+        type="file"
+        id="fileInput"
+        onChange={handleFileInput}
+        accept=".csv"
+        style={{ display: 'none' }}
+        className="neo-input"
+      />
 
       {file && (
         <Group mt="md">
@@ -110,7 +124,7 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
             <Button
               onClick={handleUpload}
               loading={isUploading}
-              className="file-upload-button"
+              className="file-upload-button neo-button-filled"
             >
               {isUploading ? 'Загрузка...' : 'Загрузить файл'}
             </Button>

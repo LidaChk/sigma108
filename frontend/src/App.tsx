@@ -1,8 +1,15 @@
-import { Alert, Button, Container, Paper, Text, Title } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Card,
+  Container,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { uploadFile } from './api/client';
-import './App.scss';
 import { FileUpload } from './components/FileUpload/FileUpload';
 import { Results } from './components/Results/Results';
 import { TaskStatus } from './components/TaskStatus/TaskStatus';
@@ -44,18 +51,25 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
-      <Container size="md" mt="xl" className="app-content">
+    <Container size="md" mt="0" className="app-content" h="100%">
+      <Stack align="center" justify="center" h="100%" gap="xl">
         <Notifications />
 
-        <Paper shadow="xs" p="xl">
-          <Title order={1} mb="md">
-            Автоматическая оценка ответов на экзамене
-          </Title>
-          <Text mb="xl">
-            Загрузите CSV файл с ответами для автоматической оценки
-          </Text>
-
+        <Card shadow="md" p="xl" radius="md" withBorder className="neo-card">
+          <Stack>
+            <Title
+              order={1}
+              mb="md"
+              ta="center"
+              c="myColor.7"
+              className="neo-text-balanced"
+            >
+              Автоматическая оценка ответов на экзамене
+            </Title>
+            <Text mb="xl" ta="center" c="dimmed" className="neo-text-balanced">
+              Загрузите CSV файл с ответами для автоматической оценки
+            </Text>
+          </Stack>
           {status === 'idle' && (
             <FileUpload onFileUpload={handleFileUpload} isUploading={false} />
           )}
@@ -77,15 +91,27 @@ export default function App() {
           )}
 
           {status === 'error' && error && (
-            <Alert title="Ошибка" color="red">
+            <Alert
+              title="Ошибка"
+              color="red"
+              variant="filled"
+              radius="md"
+              className="neo-alert"
+            >
               {error}
-              <Button onClick={handleNewUpload} mt="md">
+              <Button
+                onClick={handleNewUpload}
+                mt="md"
+                fullWidth
+                variant="white"
+                className="neo-button-filled"
+              >
                 Попробовать снова
               </Button>
             </Alert>
           )}
-        </Paper>
-      </Container>
-    </div>
+        </Card>
+      </Stack>
+    </Container>
   );
 }

@@ -1,6 +1,6 @@
-import type { UploadResponse, TaskStatusResponse } from './types';
+import type { TaskStatusResponse, UploadResponse } from './types';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8000';
 
 export async function uploadFile(file: File): Promise<UploadResponse> {
   const formData = new FormData();
