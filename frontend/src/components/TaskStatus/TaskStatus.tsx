@@ -32,7 +32,6 @@ export function TaskStatus({
         }
         setStatus(response.status);
 
-        // Используем progress из ответа, если доступен, иначе fallback на статус
         const newProgress =
           response.progress ??
           (response.status === 'created'
