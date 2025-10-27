@@ -1,0 +1,113 @@
+/* index.css */
+:root {
+  --neo-shadow: 2px 2px 0 #000;
+  --neo-border: 2px solid #000;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+  background-color: var(--mantine-color-myColor-0);
+  background-image: linear-gradient(90deg, rgba(128, 128, 128, 0.2) 1px, rgba(0, 0, 0, 0) 0px), linear-gradient(rgba(128, 128, 128, 0.2) 1px, rgba(0, 0, 0, 0) 0px);
+    background-size: 2rem 2rem, 2rem 2rem;
+  }
+
+#root {
+  height: 100%;
+}
+
+.neo-card {
+  border: var(--neo-border);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.neo-button {
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+  transition: all 0.2s ease;
+}
+
+.neo-button:hover {
+  box-shadow: 1px 1px 0 #000;
+  transform: scale(1.02);
+}
+
+.neo-input {
+  background-color: #fff;
+  border: var(--neo-border);
+  border-radius: 8px;
+}
+
+.neo-alert {
+  border: var(--neo-border);
+    box-shadow: var(--neo-shadow);
+}
+
+.neo-dropzone {
+  border: 2px dashed var(--mantine-color-black);
+  border-radius: 8px;
+  background: #f8f8f8;
+  padding: 32px;
+  color: black;
+  transition: all 0.2s ease;
+}
+.neo-dropzone:hover {
+  background-color: var(--mantine-color-myColor-0);
+  border-color: var(--mantine-color-myColor-9);
+}
+.neo-text-balanced {
+  text-wrap: balance;
+}
+
+.file-name {
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dots-spacer {
+  flex: 1;
+  position: relative;
+  height: 1em;
+  border-bottom: 1px dashed var(--mantine-color-dimmed);
+}
+
+.file-size {
+  flex-shrink: 0;
+  color: var(--mantine-color-dimmed);
+  white-space: nowrap;
+}
+
+.neo-progress {
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
+}
+
+@media (max-width: 768px) {
+
+  .dots-spacer {
+    display: none;
+  }
+
+  .file-name {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .file-size {
+    align-self: flex-end;
+  }
+
+  .neo-button-filled {
+    width: 100%;
+  }
+}
