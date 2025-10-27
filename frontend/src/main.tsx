@@ -1,4 +1,5 @@
 import '@fontsource-variable/roboto-mono/wght.css';
+import '@fontsource/montserrat/700.css';
 import {
   MantineProvider,
   createTheme,
@@ -61,7 +62,7 @@ const theme = createTheme({
   fontFamily: 'Roboto Mono Variable, Roboto Mono, monospace, sans-serif',
   headings: {
     fontFamily:
-      'Montserrat, sans-serifRoboto Mono Variable, Roboto Mono, monospace, sans-serif',
+      'Montserrat, sans-serif, Roboto Mono Variable, Roboto Mono, monospace',
     fontWeight: '700',
   },
   autoContrast: true,

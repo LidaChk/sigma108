@@ -1,4 +1,5 @@
 import { Alert, Button, Group, Text } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { IconDownload, IconRefresh } from '@tabler/icons-react';
 import { useState } from 'react';
 import { downloadResult } from '../../api/client';
@@ -24,6 +25,11 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
+      showNotification({
+        title: 'Ошибка',
+        message: 'Не удалось скачать файл',
+        color: 'red',
+      });
       console.error('Ошибка скачивания:', error);
     } finally {
       setIsDownloading(false);
@@ -43,7 +49,7 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
           leftSection={<IconDownload size={14} />}
           onClick={handleDownload}
           loading={isDownloading}
-          className="neo-button-filled"
+          className="neo-button"
         >
           Скачать результаты
         </Button>
@@ -51,7 +57,7 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
           variant="outline"
           leftSection={<IconRefresh size={14} />}
           onClick={onNewUpload}
-          className="neo-button-outline"
+          className="neo-button"
         >
           Обработать новый файл
         </Button>

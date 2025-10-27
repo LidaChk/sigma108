@@ -8,46 +8,82 @@ import {
   Title,
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { useState } from 'react';
+import { IconRefresh } from '@tabler/icons-react';
+import { useReducer } from 'react';
 import { uploadFile } from './api/client';
+import type { FileUploadResponse } from './api/types';
 import { FileUpload } from './components/FileUpload/FileUpload';
 import { Results } from './components/Results/Results';
 import { TaskStatus } from './components/TaskStatus/TaskStatus';
 
 type AppStatus = 'idle' | 'uploading' | 'processing' | 'completed' | 'error';
 
+type AppState = {
+  status: AppStatus;
+  taskId: string | null;
+  error: string | null;
+};
+
+type AppAction =
+  | { type: 'SET_STATUS'; payload: AppStatus }
+  | { type: 'SET_TASK_ID'; payload: string }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'RESET' };
+
+const initialState: AppState = {
+  status: 'idle',
+  taskId: null,
+  error: null,
+};
+
+const reducer = (state: AppState, action: AppAction): AppState => {
+  switch (action.type) {
+    case 'SET_STATUS':
+      return { ...state, status: action.payload };
+    case 'SET_TASK_ID':
+      return { ...state, taskId: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    case 'RESET':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
 export default function App() {
-  const [status, setStatus] = useState<AppStatus>('idle');
-  const [taskId, setTaskId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleFileUpload = async (file: File) => {
-    setStatus('uploading');
-    setError(null);
+    dispatch({ type: 'SET_STATUS', payload: 'uploading' });
+    dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const response = await uploadFile(file);
-      setTaskId(response.task_id);
-      setStatus('processing');
+      const response: FileUploadResponse = await uploadFile(file);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      dispatch({ type: 'SET_TASK_ID', payload: response.task_id });
+      dispatch({ type: 'SET_STATUS', payload: 'processing' });
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
-      setStatus('error');
+      const errorMessage =
+        err instanceof Error ? err.message : 'Неизвестная ошибка';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      dispatch({ type: 'SET_STATUS', payload: 'error' });
     }
   };
 
   const handleTaskComplete = () => {
-    setStatus('completed');
+    dispatch({ type: 'SET_STATUS', payload: 'completed' });
   };
 
   const handleTaskError = (errorMessage: string) => {
-    setError(errorMessage);
-    setStatus('error');
+    dispatch({ type: 'SET_ERROR', payload: errorMessage });
+    dispatch({ type: 'SET_STATUS', payload: 'error' });
   };
 
   const handleNewUpload = () => {
-    setStatus('idle');
-    setTaskId(null);
-    setError(null);
+    dispatch({ type: 'RESET' });
   };
 
   return (
@@ -56,66 +92,71 @@ export default function App() {
         <Notifications />
 
         <Card shadow="md" p="xl" radius="md" withBorder className="neo-card">
-          <Card.Section p="xl">
+          <Card.Section>
             <Title
               order={1}
-              mb="md"
+              p="md"
               ta="center"
               c="myColor.7"
               className="neo-text-balanced"
             >
               Автоматическая оценка ответов на экзамене
             </Title>
-            <Text
-              mb="xl"
-              ta="center"
-              c="dark"
-              size="md"
-              className="neo-text-balanced"
-            >
-              Загрузите CSV файл с ответами для автоматической оценки
-            </Text>
-          </Card.Section>
-          {status === 'idle' && (
-            <FileUpload onFileUpload={handleFileUpload} isUploading={false} />
-          )}
-
-          {status === 'uploading' && (
-            <FileUpload onFileUpload={handleFileUpload} isUploading={true} />
-          )}
-
-          {status === 'processing' && taskId && (
-            <TaskStatus
-              taskId={taskId}
-              onTaskComplete={handleTaskComplete}
-              onTaskError={handleTaskError}
-            />
-          )}
-
-          {status === 'completed' && taskId && (
-            <Results taskId={taskId} onNewUpload={handleNewUpload} />
-          )}
-
-          {status === 'error' && error && (
-            <Alert
-              title="Ошибка"
-              color="red"
-              variant="filled"
-              radius="md"
-              className="neo-alert"
-            >
-              {error}
-              <Button
-                onClick={handleNewUpload}
-                mt="md"
-                fullWidth
-                variant="white"
-                className="neo-button-filled"
+            {state.status === 'idle' && (
+              <Text
+                mb="md"
+                ta="center"
+                c="dark"
+                size="md"
+                className="neo-text-balanced"
               >
-                Попробовать снова
-              </Button>
-            </Alert>
-          )}
+                Загрузите CSV файл с ответами для автоматической оценки
+              </Text>
+            )}
+          </Card.Section>
+          <Card.Section>
+            {state.status === 'idle' && (
+              <FileUpload onFileUpload={handleFileUpload} isUploading={false} />
+            )}
+
+            {state.status === 'uploading' && (
+              <FileUpload onFileUpload={handleFileUpload} isUploading={true} />
+            )}
+
+            {state.status === 'processing' && state.taskId && (
+              <TaskStatus
+                taskId={state.taskId}
+                onTaskComplete={handleTaskComplete}
+                onTaskError={handleTaskError}
+              />
+            )}
+
+            {state.status === 'completed' && state.taskId && (
+              <Results taskId={state.taskId} onNewUpload={handleNewUpload} />
+            )}
+
+            {state.status === 'error' && state.error && (
+              <Stack mt="md" gap="md" align="center">
+                <Alert
+                  title="Ошибка"
+                  color="red"
+                  variant="filled"
+                  radius="md"
+                  className="neo-alert"
+                  w="100%"
+                >
+                  <Text ta="start">{state.error}</Text>
+                </Alert>
+                <Button
+                  onClick={handleNewUpload}
+                  className="neo-button"
+                  leftSection={<IconRefresh size={14} />}
+                >
+                  Попробовать снова
+                </Button>
+              </Stack>
+            )}
+          </Card.Section>
         </Card>
       </Stack>
     </Container>

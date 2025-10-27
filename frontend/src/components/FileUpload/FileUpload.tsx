@@ -1,14 +1,23 @@
-import { Button, Group, rem, Stack, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  Loader,
+  LoadingOverlay,
+  rem,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { Dropzone, type FileWithPath } from '@mantine/dropzone';
 import { IconCheck, IconCloudUpload, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 
 interface FileUploadProps {
-  onFileUpload: (file: File) => void;
-  isUploading: boolean;
+  readonly onFileUpload: (file: File) => void;
+  readonly isUploading: boolean;
 }
 
-export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
+const useFileUpload = (onFileUpload: (file: File) => void) => {
   const [file, setFile] = useState<File | null>(null);
 
   const handleDrop = (files: FileWithPath[]) => {
@@ -30,25 +39,38 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
     }
   };
 
-  const getFileSize = (file: File) => {
-    if (file.size < 1024) {
-      return `${file.size} байт`;
-    } else if (file.size < 1024 * 1024) {
-      return `${(file.size / 1024).toFixed(1)} КБ`;
-    } else {
-      return `${(file.size / (1024 * 1024)).toFixed(1)} МБ`;
-    }
-  };
+  return { file, setFile, handleDrop, handleFileInput, handleUpload };
+};
+
+const getFileSize = (file: File) => {
+  if (file.size < 1024) {
+    return `${file.size} байт`;
+  } else if (file.size < 1024 * 1024) {
+    return `${(file.size / 1024).toFixed(1)} КБ`;
+  } else {
+    return `${(file.size / (1024 * 1024)).toFixed(1)} МБ`;
+  }
+};
+
+export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
+  const { file, handleDrop, handleFileInput, handleUpload } =
+    useFileUpload(onFileUpload);
 
   return (
-    <div>
+    <Box pos="relative">
+      <LoadingOverlay
+        visible={isUploading}
+        loaderProps={{
+          children: <Loader size={30} />,
+        }}
+      />
       <Dropzone
         variant="filled"
         onDrop={handleDrop}
         onReject={(files) => console.log('rejected files', files)}
         accept={['text/csv']}
         disabled={isUploading}
-        className="neobrutal-dropzone"
+        className="neo-dropzone"
       >
         <Stack
           justify="center"
@@ -107,28 +129,26 @@ export function FileUpload({ onFileUpload, isUploading }: FileUploadProps) {
         style={{ display: 'none' }}
         className="neo-input"
       />
-
       {file && (
-        <Group mt="md">
-          <div className="file-upload-file-info">
-            <div>
-              <Text size="sm" className="file-upload-file-name">
-                {file.name}
-              </Text>
-              <Text size="xs" className="file-upload-file-size">
-                {getFileSize(file)}
-              </Text>
-            </div>
-            <Button
-              onClick={handleUpload}
-              loading={isUploading}
-              className="file-upload-button neo-button-filled"
-            >
-              {isUploading ? 'Загрузка...' : 'Загрузить файл'}
-            </Button>
-          </div>
-        </Group>
+        <Stack mt="md" gap="md" align="center">
+          <Group justify="apart" w="100%" gap="0">
+            <Text size="sm" className="file-name">
+              {file.name}
+            </Text>
+            <div className="dots-spacer"></div>
+            <Text size="xs" className="file-size">
+              {getFileSize(file)}
+            </Text>
+          </Group>
+          <Button
+            onClick={handleUpload}
+            loading={isUploading}
+            className="neo-button"
+          >
+            Загрузить файл
+          </Button>
+        </Stack>
       )}
-    </div>
+    </Box>
   );
 }

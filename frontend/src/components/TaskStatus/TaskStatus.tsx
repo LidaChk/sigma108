@@ -2,7 +2,10 @@ import { Alert, Progress, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { getTaskStatus } from '../../api/client';
-import type { TaskStatus as TaskStatusType } from '../../api/types';
+import type {
+  TaskStatusResponse,
+  TaskStatus as TaskStatusType,
+} from '../../api/types';
 
 interface TaskStatusProps {
   taskId: string;
@@ -21,13 +24,27 @@ export function TaskStatus({
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const response = await getTaskStatus(taskId);
+        const response: TaskStatusResponse = await getTaskStatus(taskId);
+        if (response.error) {
+          clearInterval(interval);
+          onTaskError(response.error);
+          return;
+        }
         setStatus(response.status);
 
-        if (response.status === 'created') setProgress(10);
-        if (response.status === 'processing') setProgress(50);
+        // Используем progress из ответа, если доступен, иначе fallback на статус
+        const newProgress =
+          response.progress ??
+          (response.status === 'created'
+            ? 10
+            : response.status === 'processing'
+            ? 100
+            : response.status === 'completed'
+            ? 100
+            : 0);
+        setProgress(newProgress);
+
         if (response.status === 'completed') {
-          setProgress(100);
           clearInterval(interval);
           onTaskComplete();
         }
@@ -53,10 +70,14 @@ export function TaskStatus({
 
   return (
     <div>
-      <Text size="lg" mb="sm" c="dark">
-        {statusText[status]}
-      </Text>
-      <Progress value={progress} size="lg" radius="md" mb="sm" />
+      <Progress
+        value={progress}
+        size="xl"
+        radius="md"
+        mb="sm"
+        animated
+        className="neo-progress"
+      />
       <Alert
         icon={<IconInfoCircle size="1rem" />}
         title="Информация"
@@ -65,6 +86,9 @@ export function TaskStatus({
       >
         <Text size="sm" c="dark">
           Идентификатор задачи: {taskId}
+        </Text>
+        <Text size="sm" c="dark">
+          Статус: {statusText[status]}
         </Text>
         <Text size="xs" c="dimmed" mt="xs">
           Обновление статуса каждые 2 секунды.

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/roboto-mono": "^5.2.8",
+    "@fontsource/montserrat": "^5.2.8",
     "@mantine/core": "^8.3.5",
     "@mantine/dropzone": "^8.3.5",
     "@mantine/hooks": "^8.3.5",
@@ -20,7 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
