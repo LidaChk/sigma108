@@ -1,13 +1,8 @@
-# backend/services/task_manager.py
-
 from pathlib import Path
 from typing import Dict, Optional
 import uuid
-# Импортируем конфигурацию
 from config import UPLOADS_DIR, PROCESSED_DIR
 
-# --- Состояние обработки (временно в памяти) ---
-# В реальном приложении это будет Redis или БД
 processing_tasks: Dict[str, Dict] = {}
 
 def create_task() -> str:
