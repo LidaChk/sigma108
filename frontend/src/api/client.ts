@@ -27,7 +27,7 @@ export async function uploadFile(file: File): Promise<FileUploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/upload`, {
+  const response = await fetch(`${API_BASE_URL}/api/upload/`, {
     method: 'POST',
     body: formData,
     headers: {},
@@ -39,7 +39,7 @@ export async function uploadFile(file: File): Promise<FileUploadResponse> {
 export async function getTaskStatus(
   taskId: string
 ): Promise<TaskStatusResponse> {
-  const response = await fetch(`${API_BASE_URL}/status/${taskId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/status/${taskId}`, {
     signal: AbortSignal.timeout(API_TIMEOUT),
   });
 
@@ -47,7 +47,7 @@ export async function getTaskStatus(
 }
 
 export async function downloadResult(taskId: string): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/download/${taskId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/download/${taskId}`, {
     signal: AbortSignal.timeout(API_TIMEOUT),
   });
 

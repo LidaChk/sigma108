@@ -62,6 +62,11 @@ backend/
 
 
 ## Запуск
+
+**`docker`**
+docker-compose up --build
+
+
 **`frontend/`**
 ```
 cd ./frontend
@@ -70,19 +75,17 @@ npm run dev
 
 
 **`backend/`**
+
+для bash VScode с Conda
+```
+eval "$(conda shell.bash hook)"
+conda activate auto-eval
+```
+
 ```
 cd ./backend
 python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
-
-
-загрузка файла
-```
-curl -X POST "http://localhost:8000/upload/" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "file=@"./testdata/sigma.csv""
-```
-Остальные запросы можно дернуть через интерфейс
-`http://localhost:8000/docs`
-
 
 ## Ошибки (To-Do)
 

@@ -1,5 +1,3 @@
-# backend/api/routes.py
-
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
