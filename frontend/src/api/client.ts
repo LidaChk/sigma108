@@ -1,8 +1,5 @@
 import type { FileUploadResponse, TaskStatusResponse } from './types';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-
 const API_TIMEOUT = 30000;
 interface ApiError extends Error {
   status?: number;
@@ -27,7 +24,7 @@ export async function uploadFile(file: File): Promise<FileUploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/api/upload/`, {
+  const response = await fetch(`/api/upload/`, {
     method: 'POST',
     body: formData,
     headers: {},
@@ -39,7 +36,7 @@ export async function uploadFile(file: File): Promise<FileUploadResponse> {
 export async function getTaskStatus(
   taskId: string
 ): Promise<TaskStatusResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/status/${taskId}`, {
+  const response = await fetch(`/api/status/${taskId}`, {
     signal: AbortSignal.timeout(API_TIMEOUT),
   });
 
@@ -47,7 +44,7 @@ export async function getTaskStatus(
 }
 
 export async function downloadResult(taskId: string): Promise<Blob> {
-  const response = await fetch(`${API_BASE_URL}/api/download/${taskId}`, {
+  const response = await fetch(`/api/download/${taskId}`, {
     signal: AbortSignal.timeout(API_TIMEOUT),
   });
 
