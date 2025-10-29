@@ -1,9 +1,6 @@
-# backend/services/file_processor.py
-
 import pandas as pd
 from pathlib import Path
 import numpy as np
-# Используем относительный импорт: поднимаемся на уровень вверх (в backend), затем импортируем config
 from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
 
 def process_csv_placeholder(input_file_path: Path, output_file_path: Path):

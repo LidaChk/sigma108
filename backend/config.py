@@ -1,5 +1,3 @@
-# backend/config.py
-
 import os
 from pathlib import Path
 
@@ -30,7 +28,6 @@ CSV_COLUMN_CONFIG = {
     ],
     # Колонка, которую мы генерируем
     "SCORE_COLUMN": "evaluator_score",
-    # Колонка с номером вопроса (важна для логики оценки)
     "QUESTION_NUMBER_COLUMN": "№ вопроса"
 }
 

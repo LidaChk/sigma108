@@ -1,0 +1,73 @@
+name: Deploy to Yandex Cloud
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
+  YC_REGISTRY_ID: ${{ secrets.YC_REGISTRY_ID }}
+  YC_CONTAINER_ID: ${{ secrets.YC_CONTAINER_ID }}
+  YC_SA_ID: ${{ secrets.YC_SA_ID }}
+  DOCKER_IMAGE_NAME: sigma108-app
+  DOCKER_IMAGE_TAG: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Yandex Cloud CLI
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -n
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
+          echo "/home/runner/yandex-cloud/bin" >> $GITHUB_PATH
+
+      - name: Authenticate Yandex Cloud CLI
+        run: |
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
+          echo '${{ secrets.YC_SA_KEY_JSON }}' > /tmp/sa-key.json
+          yc config profile create sa-profile >/dev/null 2>&1
+          yc config set service-account-key /tmp/sa-key.json
+          yc config set folder-id ${{ env.YC_FOLDER_ID }}
+          yc config profile activate sa-profile >/dev/null 2>&1
+          echo "Authenticated as service account"
+
+      - name: Configure Docker
+        run: |
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
+          yc container registry configure-docker >/dev/null 2>&1
+          echo "Docker configured for cr.yandex"
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }} -f backend/Dockerfile .
+
+      - name: Push Docker image
+        run: |
+          IMAGE=cr.yandex/${{ env.YC_REGISTRY_ID }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}
+          docker tag ${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }} $IMAGE
+          docker push $IMAGE
+
+      # Создать новую ревизию (контейнер уже существует)
+      - name: Deploy New Container Revision
+        run: |
+          export PATH="/home/runner/yandex-cloud/bin:$PATH"
+          IMAGE=cr.yandex/${{ env.YC_REGISTRY_ID }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}
+
+          echo "Deploying new revision..."
+          yc serverless container revision deploy \
+            --container-id ${{ env.YC_CONTAINER_ID }} \
+            --image $IMAGE \
+            --cores 1 \
+            --memory 1GB \
+            --service-account-id ${{ env.YC_SA_ID }} \
+            --concurrency 10
+
+      - name: Deployment Complete
+        run: |
+          echo "Deployed successfully!"
+
