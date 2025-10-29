@@ -12,7 +12,6 @@ app = FastAPI(title="Sigma108 Backend Placeholder")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:8000"],
-    # allow_origins=["https://your-app.yacloud.top"], # TODO прод
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
