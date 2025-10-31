@@ -275,14 +275,3 @@ def process_exam_csv(input_file_path: Path, output_file_path: Path, use_model: b
         logger.error(f"Критическая ошибка при обработке CSV: {e}")
         raise
 
-
-if __name__ == "__main__":
-    # Тестирование функции
-    input_path = Path("обрезанный_файл.csv")
-    output_path = Path("test_output.csv")
-
-    try:
-        process_exam_csv(input_path, output_path, use_model=True)
-        print("✅ Обработка завершена успешно!")
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
