@@ -1,6 +1,8 @@
 import type { FileUploadResponse, TaskStatusResponse } from './types';
 
-const API_TIMEOUT = 30000;
+const API_TIMEOUT_HOURS = 12;
+const API_TIMEOUT = API_TIMEOUT_HOURS * 60 * 60 * 1000;
+
 interface ApiError extends Error {
   status?: number;
   message: string;

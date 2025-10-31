@@ -9,12 +9,13 @@ import {
 } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { IconRefresh } from '@tabler/icons-react';
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { uploadFile } from './api/client';
 import type { FileUploadResponse } from './api/types';
 import { FileUpload } from './components/FileUpload/FileUpload';
 import { Results } from './components/Results/Results';
 import { TaskStatus } from './components/TaskStatus/TaskStatus';
+import { useTaskIdPersistence } from './hooks/useTaskIdPersistence';
 
 type AppStatus = 'idle' | 'uploading' | 'processing' | 'completed' | 'error';
 
@@ -53,6 +54,17 @@ const reducer = (state: AppState, action: AppAction): AppState => {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { saveTaskId, getTaskId, clearTaskId } = useTaskIdPersistence();
+
+  useEffect(() => {
+    console.log('🚀 Дата сборки:', import.meta.env.VITE_BUILD_TIME);
+
+    const storedTaskId = getTaskId();
+    if (storedTaskId) {
+      dispatch({ type: 'SET_TASK_ID', payload: storedTaskId });
+      dispatch({ type: 'SET_STATUS', payload: 'processing' });
+    }
+  }, [getTaskId]);
 
   const handleFileUpload = async (file: File) => {
     dispatch({ type: 'SET_STATUS', payload: 'uploading' });
@@ -64,6 +76,7 @@ export default function App() {
         throw new Error(response.error);
       }
       dispatch({ type: 'SET_TASK_ID', payload: response.task_id });
+      saveTaskId(response.task_id);
       dispatch({ type: 'SET_STATUS', payload: 'processing' });
     } catch (err: unknown) {
       const errorMessage =
@@ -74,15 +87,18 @@ export default function App() {
   };
 
   const handleTaskComplete = () => {
+    clearTaskId();
     dispatch({ type: 'SET_STATUS', payload: 'completed' });
   };
 
   const handleTaskError = (errorMessage: string) => {
+    clearTaskId();
     dispatch({ type: 'SET_ERROR', payload: errorMessage });
     dispatch({ type: 'SET_STATUS', payload: 'error' });
   };
 
   const handleNewUpload = () => {
+    clearTaskId();
     dispatch({ type: 'RESET' });
   };
 
