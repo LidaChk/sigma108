@@ -1,7 +1,7 @@
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
-from services.file_processor import process_csv_placeholder
+from services.file_processor import process_csv_with_model
 from services.task_manager import create_task, get_task_info, update_task_status, check_and_update_status, get_output_path, cleanup_task_files, processing_tasks
 from config import TASK_STATUS
 router = APIRouter()
@@ -39,7 +39,7 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
 
     update_task_status(task_id, TASK_STATUS["PROCESSING"])
 
-    background_tasks.add_task(process_csv_placeholder, input_path, output_path)
+    background_tasks.add_task(process_csv_with_model, input_path, output_path)
 
     return {"task_id": task_id, "status": "File uploaded, processing started"}
 
