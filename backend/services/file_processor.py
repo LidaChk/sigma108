@@ -2,10 +2,12 @@ import pandas as pd
 import numpy as np
 import torch
 import re
-from log.log_config import logger
+import logging
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from backend.config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
+from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
+
+logger = logging.getLogger(__name__)
 
 
 def clean_text(text):
@@ -274,4 +276,3 @@ def process_exam_csv(input_file_path: Path, output_file_path: Path, use_model: b
     except Exception as e:
         logger.error(f"Критическая ошибка при обработке CSV: {e}")
         raise
-
