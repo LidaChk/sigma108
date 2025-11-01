@@ -2,12 +2,10 @@ import pandas as pd
 import numpy as np
 import torch
 import re
-import logging
+from log.log_config import logger
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
-
-logger = logging.getLogger(__name__)
+from backend.config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
 
 
 def clean_text(text):
