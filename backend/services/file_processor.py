@@ -24,7 +24,7 @@ def clean_text(text):
     return text.strip()
 
 class ModelPredictor:
-    def __init__(self, model_path: str = "./fine_tuned_rubert_base"):
+    def __init__(self, model_path: str = "services/fine_tuned_rubert_base"):
         """Инициализация модели для предсказания оценок"""
         try:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -117,7 +117,7 @@ class ModelPredictor:
             return min(predicted_class, max_score)
 
 
-def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = "./fine_tuned_rubert_base"):
+def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = "services/fine_tuned_rubert_base"):
     """
     Основная функция для обработки CSV-файла с помощью модели.
     Читает файл, предсказывает оценки и сохраняет результат.
