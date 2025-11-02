@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs/>
+  <g>
+    <!-- Primary: square centered, size 40x40 (60-70% of canvas). Coordinates aligned to 4px grid -->
+    <rect x="12" y="12" width="40" height="40" rx="4" fill="#0042b5" />
+    <!-- Transformation: subtract narrow vertical bar to form '1' negative space (use white rect) -->
+    <rect x="18" y="18" width="4" height="28" fill="#ffffff" />
+    <!-- Accent: '0' as white rounded rectangle ring made of outer white rect and inner blue cut (two elements) -->
+    <rect x="28" y="18" width="12" height="20" rx="6" fill="#ffffff" />
+    <rect x="30" y="20" width="8" height="16" rx="4" fill="#0042b5" />
+    <!-- Accent: '8' as stacked white dots (two) to read 8 -->
+    <rect x="44" y="18" width="4" height="8" rx="2" fill="#ffffff" />
+    <rect x="44" y="28" width="4" height="8" rx="2" fill="#ffffff" />
+  </g>
+</svg>
