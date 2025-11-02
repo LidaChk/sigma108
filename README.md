@@ -10,7 +10,7 @@
 *   **CI/CD:** GitHub Actions
 *   **Развёртывание:** Yandex Cloud
 *   **ML:** Python, transformers, torch, pandas
-*   **SLM:** ruBert-base (open source - https://huggingface.co/ai-forever/ruBert-base)
+*   **SLM:** ruBert-base (open source - https://huggingface.co/ai-forever/ruBert-base - trained by torch, peft, transformers, pandas)
 
 ## Структура проекта
 
