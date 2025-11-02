@@ -4,7 +4,7 @@ import torch
 import re
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
+from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_ENCODING
 from logger.log_config import logger
 
 
@@ -24,15 +24,49 @@ def clean_text(text):
     return text.strip()
 
 class ModelPredictor:
-    def __init__(self, model_path: str = "../fine_tuned_rubert_base"):
+    def __init__(self, model_path: str = None):
         """Инициализация модели для предсказания оценок"""
         try:
+            # 🔧 АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ПУТИ К МОДЕЛИ
+            if model_path is None:
+                # Пробуем разные возможные пути к модели
+                possible_paths = [
+                    "fine_tuned_rubert_base",  # Для Docker
+                    "../fine_tuned_rubert_base",  # Для локальной разработки
+                    "/app/fine_tuned_rubert_base",  # Абсолютный путь в Docker
+                    "./fine_tuned_rubert_base"  # Текущая директория
+                ]
+
+                for path in possible_paths:
+                    if Path(path).exists():
+                        model_path = path
+                        logger.info(f"🎯 Найдена модель по пути: {model_path}")
+                        break
+                else:
+                    # Если модель не найдена, используем путь по умолчанию для Docker
+                    model_path = "fine_tuned_rubert_base"
+                    logger.warning(f"⚠️ Модель не найдена, будет использован путь: {model_path}")
+
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
             logger.info(f"Используемое устройство: {self.device}")
+            logger.info(f"Загрузка модели из: {model_path}")
 
-            # Загрузка модели и токенизатора
-            self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-            self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
+            # 🔧 ПРОВЕРКА СУЩЕСТВОВАНИЯ МОДЕЛИ
+            model_dir = Path(model_path)
+            if not model_dir.exists():
+                raise FileNotFoundError(f"Директория с моделью не найдена: {model_path}")
+
+            # 🔧 ЗАГРУЗКА С ЛОКАЛЬНЫМИ ФАЙЛАМИ
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                str(model_dir),
+                local_files_only=True  # 🔧 Важно для Docker
+            )
+
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                str(model_dir),
+                local_files_only=True  # 🔧 Важно для Docker
+            )
+
             self.model.to(self.device)
             self.model.eval()
 
@@ -117,7 +151,7 @@ class ModelPredictor:
             return min(predicted_class, max_score)
 
 
-def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = "../fine_tuned_rubert_base"):
+def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = None):
     """
     Основная функция для обработки CSV-файла с помощью модели.
     Читает файл, предсказывает оценки и сохраняет результат.
