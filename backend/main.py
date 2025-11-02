@@ -12,7 +12,8 @@ app = FastAPI(title="Sigma108 Backend Placeholder")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost", "http://localhost:80",    "http://185.135.83.219",
-    "http://185.135.83.219:80", "http://localhost:8080", "http://185.135.83.219:8080"],
+    "http://185.135.83.219:80", "http://localhost:8080", "http://185.135.83.219:8080",
+     "https://lidachk.github.io"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

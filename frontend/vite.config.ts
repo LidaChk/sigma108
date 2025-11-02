@@ -23,6 +23,10 @@ function getMoscowTime() {
 
 export default defineConfig({
   plugins: [react()],
+  base: '/sigma108/',
+  build: {
+    outDir: 'dist',
+  },
   define: {
     'import.meta.env.VITE_BUILD_TIME': JSON.stringify(getMoscowTime()),
   },
