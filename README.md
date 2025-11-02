@@ -15,22 +15,32 @@
 ## Структура проекта
 
 *   **`backend/`**
-backend/
+
 ```
-├── main.py               # FastAPI, подключение маршрутов
-├── config.py             #
-├── models/               #
-│   └── ...
-├── services/             # Логика приложения
-│   ├── __init__.py       #
-│   ├── file_processor.py # process_csv_placeholder
-│   └── task_manager.py   # processing_tasks, стату
-├── api/                  # роутеры FastAPI
-│   ├── __init__.py       #
-│   └── routes.py         # @app.post("/upload"), @app.get("/status"), @app.get("/download")
-└── requirements.txt      # Зависимости для backend (fastapi, uvicorn, pandas, numpy)
+├── main.py                      # FastAPI, подключение маршрутов
+├── config.py                    #
+├── fine_tuned_rubert_base/      # Модель
+│   ├── config.json              #
+│   ├── model.safetensors        #
+│   ├── special_tokens_map.json  #
+│   ├── tokenizer.json           #
+│   ├── tokenizer_config.json    #
+│   ├── training_args.bin        #
+│   └── vocab.txt                # 
+├── services/                    # Логика приложения
+│   ├── __init__.py              #
+│   ├── file_processor.py        # process_csv_placeholder
+│   └── task_manager.py          # processing_tasks, стату
+├── api/                         # роутеры FastAPI
+│   ├── __init__.py              #
+│   └── routes.py                # @app.post("/upload"), @app.get("/status"), @app.get("/download")
+├── logger/                      # 
+│   └── log_config.py            # Логирование
+└── requirements.txt             # Зависимости для backend (fastapi, uvicorn, pandas, numpy)
 ```
 *   **`frontend/`**
+
+
 
 ## Задачи (To-Do)
 
