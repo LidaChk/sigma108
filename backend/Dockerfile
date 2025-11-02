@@ -21,8 +21,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ ./
 
-# Создаем директорию для логов
+
 RUN mkdir -p log
+RUN mkdir -p processed
+RUN mkdir -p uploads
 
 COPY --from=frontend-builder /app/frontend/dist /app/backend/static
 
