@@ -20,10 +20,17 @@ def create_task() -> str:
 
 def get_task_info(task_id: str) -> Optional[Dict]:
     return processing_tasks.get(task_id)
-
 def update_task_status(task_id: str, status: str):
     if task_id in processing_tasks:
         processing_tasks[task_id]["status"] = status
+
+def set_error_status(task_id: str, error_message: str = None):
+    """Устанавливает статус ошибки для задачи"""
+    if task_id in processing_tasks:
+        processing_tasks[task_id]["status"] = "error"
+        if error_message:
+            processing_tasks[task_id]["error_message"] = error_message
+
 
 def check_and_update_status(task_id: str):
     task_info = processing_tasks.get(task_id)

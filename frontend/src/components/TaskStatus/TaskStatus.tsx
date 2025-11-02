@@ -13,6 +13,8 @@ interface TaskStatusProps {
   onTaskError: (error: string) => void;
 }
 
+const STATUS_FETCH_INTERVAL = 5_000;
+
 export function TaskStatus({
   taskId,
   onTaskComplete,
@@ -47,7 +49,7 @@ export function TaskStatus({
           clearInterval(interval);
           onTaskComplete();
         }
-        if (response.status === 'failed') {
+        if (response.status === 'failed' || response.status === 'error') {
           clearInterval(interval);
           onTaskError('Ошибка обработки файла');
         }
@@ -55,7 +57,7 @@ export function TaskStatus({
         clearInterval(interval);
         onTaskError(`Ошибка получения статуса: ${(error as Error).message}`);
       }
-    }, 2000);
+    }, STATUS_FETCH_INTERVAL);
 
     return () => clearInterval(interval);
   }, [taskId, onTaskComplete, onTaskError]);
@@ -65,6 +67,7 @@ export function TaskStatus({
     processing: 'Идет обработка файла...',
     completed: 'Обработка завершена!',
     failed: 'Ошибка обработки файла',
+    error: 'Ошибка обработки файла',
   };
 
   return (
@@ -79,8 +82,10 @@ export function TaskStatus({
       />
       <Alert
         icon={<IconInfoCircle size="1rem" />}
-        title="Информация"
-        color="blue"
+        title={
+          status === 'failed' || status === 'error' ? 'Ошибка' : 'Информация'
+        }
+        color={status === 'failed' || status === 'error' ? 'red' : 'blue'}
         className="neo-alert"
       >
         <Text size="sm" c="dark">
@@ -90,7 +95,7 @@ export function TaskStatus({
           Статус: {statusText[status]}
         </Text>
         <Text size="xs" c="dimmed" mt="xs">
-          Обновление статуса каждые 2 секунды.
+          Обновление статуса каждые {STATUS_FETCH_INTERVAL / 1000} с.
         </Text>
       </Alert>
     </div>

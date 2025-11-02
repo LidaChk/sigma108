@@ -2,9 +2,25 @@ from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from services.file_processor import process_csv_with_model
-from services.task_manager import create_task, get_task_info, update_task_status, check_and_update_status, get_output_path, cleanup_task_files, processing_tasks
+from services.task_manager import create_task, get_task_info, update_task_status, check_and_update_status, get_output_path, cleanup_task_files, processing_tasks, set_error_status
+from logger.log_config import logger
 from config import TASK_STATUS
 router = APIRouter()
+
+def process_task_with_error_handling(task_id: str, input_path: Path, output_path: Path):
+    """
+    Функция-обертка для обработки файла с обработкой ошибок.
+    """
+    try:
+        process_csv_with_model(input_path, output_path)
+    except Exception as e:
+        error_msg = f"Ошибка при обработке файла: {str(e)}"
+        logger.error(f"Задача {task_id}: {error_msg}")
+        set_error_status(task_id, error_msg)
+        logger.info(f"Задача {task_id}: установлен статус 'error'")
+        # Очищаем временные файлы в случае ошибки
+        input_path.unlink(missing_ok=True)
+        output_path.unlink(missing_ok=True)
 
 @router.post("/upload/")
 async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
@@ -39,7 +55,7 @@ async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File
 
     update_task_status(task_id, TASK_STATUS["PROCESSING"])
 
-    background_tasks.add_task(process_csv_with_model, input_path, output_path)
+    background_tasks.add_task(process_task_with_error_handling, task_id, input_path, output_path)
 
     return {"task_id": task_id, "status": "File uploaded, processing started"}
 
@@ -54,6 +70,10 @@ async def get_status(task_id: str):
 
     check_and_update_status(task_id)
 
+    if task_info["status"] == "error":
+        error_message = task_info.get("error_message", "Неизвестная ошибка при обработке файла")
+        raise HTTPException(status_code=500, detail=error_message)
+
     return {"task_id": task_id, "status": task_info["status"]}
 
 @router.get("/download/{task_id}")
@@ -66,6 +86,11 @@ async def download_file(task_id: str):
         raise HTTPException(status_code=404, detail="Task ID not found")
 
     output_path = get_output_path(task_id)
+
+    # Проверяем статус задачи
+    if task_info["status"] == "error":
+        error_message = task_info.get("error_message", "Неизвестная ошибка при обработке файла")
+        raise HTTPException(status_code=500, detail=f"Ошибка при обработке файла: {error_message}")
 
     if not output_path or not output_path.exists():
         if task_info["status"] != TASK_STATUS["COMPLETED"]:

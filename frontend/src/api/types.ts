@@ -11,4 +11,9 @@ export interface TaskStatusResponse {
   error?: string;
 }
 
-export type TaskStatus = 'created' | 'processing' | 'completed' | 'failed';
+export type TaskStatus =
+  | 'created'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'error';

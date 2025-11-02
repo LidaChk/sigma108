@@ -54,7 +54,7 @@ export async function downloadResult(taskId: string): Promise<Blob> {
     const errorText = await response.text();
     const error: ApiError = new Error(`HTTP error! status: ${response.status}`);
     error.status = response.status;
-    if (errorText) {
+    if (response.status === 500 && errorText) {
       error.message += ` - ${errorText}`;
     }
     throw error;
