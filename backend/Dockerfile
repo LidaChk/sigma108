@@ -16,6 +16,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+
 # УСТАНАВЛИВАЕМ ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ДЛЯ TRANSFORMERS
 ENV TRANSFORMERS_OFFLINE=1
 ENV HF_DATASETS_OFFLINE=1
@@ -29,6 +30,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./
 
 RUN mkdir -p log processed uploads
+
+# Copy the pulled model from temp clone
 
 COPY --from=frontend-builder /app/frontend/dist /app/backend/static
 
