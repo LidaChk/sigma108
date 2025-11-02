@@ -25,6 +25,4 @@ RUN mkdir -p log processed uploads
 
 COPY --from=frontend-builder /app/frontend/dist /app/backend/static
 
-WORKDIR /app
-
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
