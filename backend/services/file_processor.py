@@ -24,47 +24,48 @@ def clean_text(text):
     return text.strip()
 
 class ModelPredictor:
-    def __init__(self, model_path: str = None):
+        def __init__(self, model_path: str = None):
         """Инициализация модели для предсказания оценок"""
         try:
             # 🔧 АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ПУТИ К МОДЕЛИ
             if model_path is None:
-                # Пробуем разные возможные пути к модели
-                possible_paths = [
-                    "fine_tuned_rubert_base",  # Для Docker
-                    "../fine_tuned_rubert_base",  # Для локальной разработки
-                    "/app/fine_tuned_rubert_base",  # Абсолютный путь в Docker
-                    "./fine_tuned_rubert_base"  # Текущая директория
-                ]
+                # Определяем базовую директорию (текущий файл: backend/services/file_processor.py)
+                current_file = Path(__file__)
+                base_dir = current_file.parent.parent  # backend/
 
-                for path in possible_paths:
-                    if Path(path).exists():
-                        model_path = path
-                        logger.info(f"🎯 Найдена модель по пути: {model_path}")
-                        break
-                else:
-                    # Если модель не найдена, используем путь по умолчанию для Docker
-                    model_path = "fine_tuned_rubert_base"
-                    logger.warning(f"⚠️ Модель не найдена, будет использован путь: {model_path}")
+                # Основной путь к модели: backend/fine_tuned_rubert_base
+                model_path = str(base_dir / "fine_tuned_rubert_base")
+
+                logger.info(f"🔍 Поиск модели по пути: {model_path}")
 
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
-            logger.info(f"Используемое устройство: {self.device}")
-            logger.info(f"Загрузка модели из: {model_path}")
+            logger.info(f"🎯 Используемое устройство: {self.device}")
+            logger.info(f"📁 Загрузка модели из: {model_path}")
 
             # 🔧 ПРОВЕРКА СУЩЕСТВОВАНИЯ МОДЕЛИ
             model_dir = Path(model_path)
             if not model_dir.exists():
-                raise FileNotFoundError(f"Директория с моделью не найдена: {model_path}")
+                error_msg = f"❌ Директория с моделью не найдена: {model_path}"
+                logger.error(error_msg)
+
+                # Покажем что есть в директории
+                if model_dir.parent.exists():
+                    available = [f.name for f in model_dir.parent.iterdir() if f.is_dir()]
+                    logger.error(f"📂 Доступные директории в {model_dir.parent}: {available}")
+
+                raise FileNotFoundError(error_msg)
 
             # 🔧 ЗАГРУЗКА С ЛОКАЛЬНЫМИ ФАЙЛАМИ
+            logger.info("🔄 Загрузка токенизатора...")
             self.tokenizer = AutoTokenizer.from_pretrained(
                 str(model_dir),
-                local_files_only=True  # 🔧 Важно для Docker
+                local_files_only=True
             )
 
+            logger.info("🔄 Загрузка модели...")
             self.model = AutoModelForSequenceClassification.from_pretrained(
                 str(model_dir),
-                local_files_only=True  # 🔧 Важно для Docker
+                local_files_only=True
             )
 
             self.model.to(self.device)
