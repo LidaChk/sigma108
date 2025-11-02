@@ -9,7 +9,8 @@
 *   **Контейнеризация:** Docker
 *   **CI/CD:** GitHub Actions
 *   **Развёртывание:** Yandex Cloud
-*   **ML:**
+*   **ML:** Python, transformers, torch, pandas
+*   **SLM:** ruBert-base (open source - https://huggingface.co/ai-forever/ruBert-base)
 
 ## Структура проекта
 
