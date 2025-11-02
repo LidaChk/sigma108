@@ -14,7 +14,14 @@ RUN npm run build
 
 FROM python:3.12-slim
 
-WORKDIR /app/backend
+WORKDIR /app
+
+# УСТАНАВЛИВАЕМ ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ДЛЯ TRANSFORMERS
+ENV TRANSFORMERS_OFFLINE=1
+ENV HF_DATASETS_OFFLINE=1
+
+# КОПИРУЕМ ВЕСЬ BACKEND
+COPY backend/ ./backend/
 
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
