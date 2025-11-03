@@ -7,7 +7,7 @@ export interface FileUploadResponse {
 export interface TaskStatusResponse {
   task_id: string;
   status: TaskStatus;
-  progress?: number;
+  progress_percent?: number;
   error?: string;
 }
 

@@ -76,6 +76,7 @@ export default function App() {
         throw new Error(response.error);
       }
       dispatch({ type: 'SET_TASK_ID', payload: response.task_id });
+      console.info('Задача успешно создана с TaskId:', response.task_id);
       saveTaskId(response.task_id);
       dispatch({ type: 'SET_STATUS', payload: 'processing' });
     } catch (err: unknown) {
@@ -87,12 +88,10 @@ export default function App() {
   };
 
   const handleTaskComplete = () => {
-    clearTaskId();
     dispatch({ type: 'SET_STATUS', payload: 'completed' });
   };
 
   const handleTaskError = (errorMessage: string) => {
-    clearTaskId();
     dispatch({ type: 'SET_ERROR', payload: errorMessage });
     dispatch({ type: 'SET_STATUS', payload: 'error' });
   };

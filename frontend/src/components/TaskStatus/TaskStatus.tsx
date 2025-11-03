@@ -13,7 +13,7 @@ interface TaskStatusProps {
   onTaskError: (error: string) => void;
 }
 
-const STATUS_FETCH_INTERVAL = 5_000;
+const STATUS_FETCH_INTERVAL = 10_000;
 
 export function TaskStatus({
   taskId,
@@ -35,7 +35,7 @@ export function TaskStatus({
         setStatus(response.status);
 
         const newProgress =
-          response.progress ??
+          response.progress_percent ??
           (response.status === 'created'
             ? 10
             : response.status === 'processing'
@@ -54,6 +54,13 @@ export function TaskStatus({
           onTaskError('Ошибка обработки файла');
         }
       } catch (error: unknown) {
+        if (
+          (error as any)?.name === 'AbortError' ||
+          (error as any)?.name === 'TimeoutError'
+        ) {
+          console.warn(`[Timeout] Request for task ${taskId} timed out.`);
+          return;
+        }
         clearInterval(interval);
         onTaskError(`Ошибка получения статуса: ${(error as Error).message}`);
       }

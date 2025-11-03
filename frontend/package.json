@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:with-base": "tsc -b && vite build --with-base",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
-    "build-and-deploy": "npm run build && npm run deploy"
+    "build-and-deploy": "cross-env VITE_GHPAGES_BUILD=true tsc -b && vite build && npm run deploy"
   },
   "dependencies": {
     "@fontsource-variable/roboto-mono": "^5.2.8",

@@ -21,9 +21,12 @@ function getMoscowTime() {
   });
 }
 
+// Проверяем аргументы командной строки
+const withBase = process.argv.includes('--with-base');
+
 export default defineConfig({
   plugins: [react()],
-  base: '/sigma108/',
+  base: withBase ? '/sigma108/' : '',
   build: {
     outDir: 'dist',
   },

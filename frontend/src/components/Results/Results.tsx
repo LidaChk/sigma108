@@ -42,6 +42,9 @@ export function Results({ taskId, onNewUpload }: ResultsProps) {
         <Text size="sm" c="dark">
           Файл успешно обработан. Вы можете скачать результаты в формате CSV.
         </Text>
+        <Text size="sm" c="dark" pt="xs">
+          Идентификатор задачи: {taskId}
+        </Text>
       </Alert>
 
       <Group mt="md" justify="center">
