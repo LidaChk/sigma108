@@ -9,7 +9,7 @@
 - **Windows (в командной строке `cmd` или PowerShell):**
 
   ```bash
-  "C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-web-security --allow-running-insecure-content --disable-features=VizDisplayCompositor --new-window "https://lidachk.github.io/sigma108/"
+  "C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-web-security --allow-running-insecure-content --disable-features=VizDisplayCompositor --ignore-certificate-errors --new-window "https://lidachk.github.io/sigma108/"
   ```
 
   _Примечание:_ Убедитесь, что путь к `chrome.exe` указан верно (может отличаться, если Chrome установлен в другую папку).
@@ -17,7 +17,7 @@
 - **macOS (в терминале):**
 
   ```bash
-  open -a "Google Chrome" --args --disable-web-security --allow-running-insecure-content --disable-features=VizDisplayCompositor --new-window "https://lidachk.github.io/sigma108/"
+  open -a "Google Chrome" --args --disable-web-security --allow-running-insecure-content --disable-features=VizDisplayCompositor --ignore-certificate-errors --new-window "https://lidachk.github.io/sigma108/"
   ```
 
 Эти флаги отключают защиту от смешанного содержимого и позволяют фронтенду общаться с HTTP-бэкендом.
