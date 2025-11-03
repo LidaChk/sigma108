@@ -3,7 +3,9 @@
 **Цель:** Создать веб-приложение для автоматической оценки устных ответов на экзамене по русскому языку для иностранных граждан.
 
 **Деплой:** [https://lidachk.github.io/sigma108/](https://lidachk.github.io/sigma108/) 
+
 **Видео:** [https://cloud.mail.ru/public/xcKe/UBnpmvgwz](https://cloud.mail.ru/public/xcKe/UBnpmvgwz)
+
 **Инструкция:** [instruction.md](instruction.md)
 
 ## Стек
