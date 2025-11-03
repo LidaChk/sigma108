@@ -36,8 +36,8 @@
 │   └── vocab.txt                #
 ├── services/                    # Логика приложения
 │   ├── __init__.py              #
-│   ├── file_processor.py        # process_csv_placeholder
-│   └── task_manager.py          # processing_tasks, стату
+│   ├── file_processor.py        # 
+│   └── task_manager.py          # 
 ├── api/                         # роутеры FastAPI
 │   ├── __init__.py              #
 │   └── routes.py                # @app.post("/upload"), @app.get("/status"), @app.get("/download")
