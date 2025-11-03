@@ -4,7 +4,7 @@ import torch
 import re
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_ENCODING
+from config import CSV_COLUMN_CONFIG, QUESTION_NUMBER_COLUMN_NAME, SCORE_COLUMN_NAME, CSV_SEPARATOR, CSV_ENCODING
 from logger.log_config import logger
 
 
@@ -24,50 +24,15 @@ def clean_text(text):
     return text.strip()
 
 class ModelPredictor:
-        def __init__(self, model_path: str = None):
+    def __init__(self, model_path: str = "fine_tuned_rubert_base"):
         """Инициализация модели для предсказания оценок"""
         try:
-            # 🔧 АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ ПУТИ К МОДЕЛИ
-            if model_path is None:
-                # Определяем базовую директорию (текущий файл: backend/services/file_processor.py)
-                current_file = Path(__file__)
-                base_dir = current_file.parent.parent  # backend/
-
-                # Основной путь к модели: backend/fine_tuned_rubert_base
-                model_path = str(base_dir / "fine_tuned_rubert_base")
-
-                logger.info(f"🔍 Поиск модели по пути: {model_path}")
-
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
-            logger.info(f"🎯 Используемое устройство: {self.device}")
-            logger.info(f"📁 Загрузка модели из: {model_path}")
+            logger.info(f"Используемое устройство: {self.device}")
 
-            # 🔧 ПРОВЕРКА СУЩЕСТВОВАНИЯ МОДЕЛИ
-            model_dir = Path(model_path)
-            if not model_dir.exists():
-                error_msg = f"❌ Директория с моделью не найдена: {model_path}"
-                logger.error(error_msg)
-
-                # Покажем что есть в директории
-                if model_dir.parent.exists():
-                    available = [f.name for f in model_dir.parent.iterdir() if f.is_dir()]
-                    logger.error(f"📂 Доступные директории в {model_dir.parent}: {available}")
-
-                raise FileNotFoundError(error_msg)
-
-            # 🔧 ЗАГРУЗКА С ЛОКАЛЬНЫМИ ФАЙЛАМИ
-            logger.info("🔄 Загрузка токенизатора...")
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                str(model_dir),
-                local_files_only=True
-            )
-
-            logger.info("🔄 Загрузка модели...")
-            self.model = AutoModelForSequenceClassification.from_pretrained(
-                str(model_dir),
-                local_files_only=True
-            )
-
+            # Загрузка модели и токенизатора
+            self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+            self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
             self.model.to(self.device)
             self.model.eval()
 
@@ -152,7 +117,7 @@ class ModelPredictor:
             return min(predicted_class, max_score)
 
 
-def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = None):
+def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_path: str = "fine_tuned_rubert_base", progress_callback=None):
     """
     Основная функция для обработки CSV-файла с помощью модели.
     Читает файл, предсказывает оценки и сохраняет результат.
@@ -215,9 +180,15 @@ def process_csv_with_model(input_file_path: Path, output_file_path: Path, model_
 
             # Логирование прогресса
             if (idx + 1) % 100 == 0 or (idx + 1) == len(df):
-                progress_percent = int(((idx + 1) / len(df)) * 100)  # TODO процент обработанных на текущий момент
+                progress_percent = int(((idx + 1) / len(df)) * 100)
                 logger.info(f"Обработано {idx + 1}/{len(df)} записей ({progress_percent}%)")
 
+                # Передаем прогресс через callback если он предоставлен
+                if progress_callback:
+                    try:
+                        progress_callback(progress_percent)
+                    except Exception as e:
+                        logger.warning(f"Ошибка при вызове progress_callback: {e}")
 
         # Заполнение колонки с оценками
         df[SCORE_COLUMN_NAME] = scores
@@ -290,9 +261,8 @@ def process_csv_placeholder(input_file_path: Path, output_file_path: Path):
             output_file_path.unlink(missing_ok=True)
         raise e
 
-
 # Основная функция для вызова из бэкенда
-def process_exam_csv(input_file_path: Path, output_file_path: Path, use_model: bool = True):
+def process_exam_csv(input_file_path: Path, output_file_path: Path, use_model: bool = True, progress_callback=None):
     """
     Основная функция для обработки экзаменационных CSV-файлов.
 
@@ -300,10 +270,11 @@ def process_exam_csv(input_file_path: Path, output_file_path: Path, use_model: b
         input_file_path: Путь к входному CSV-файлу
         output_file_path: Путь для сохранения результата
         use_model: Использовать ли модель для предсказания (True) или заглушку (False)
+        progress_callback: Функция для обновления прогресса обработки
     """
     try:
         if use_model:
-            return process_csv_with_model(input_file_path, output_file_path)
+            return process_csv_with_model(input_file_path, output_file_path, progress_callback=progress_callback)
         else:
             return process_csv_placeholder(input_file_path, output_file_path)
     except Exception as e:

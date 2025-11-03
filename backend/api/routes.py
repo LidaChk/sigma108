@@ -2,17 +2,19 @@ from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse
 from services.file_processor import process_csv_with_model
-from services.task_manager import create_task, get_task_info, update_task_status, check_and_update_status, get_output_path, cleanup_task_files, processing_tasks, set_error_status
+from services.task_manager import create_task, get_task_info, update_task_status, check_and_update_status, get_output_path, cleanup_task_files, processing_tasks, set_error_status, update_progress_percent
 from logger.log_config import logger
 from config import TASK_STATUS
 router = APIRouter()
-
 def process_task_with_error_handling(task_id: str, input_path: Path, output_path: Path):
     """
     Функция-обертка для обработки файла с обработкой ошибок.
     """
     try:
-        process_csv_with_model(input_path, output_path)
+        def progress_callback(progress_percent):
+            update_progress_percent(task_id, progress_percent)
+
+        process_csv_with_model(input_path, output_path, progress_callback=progress_callback)
     except Exception as e:
         error_msg = f"Ошибка при обработке файла: {str(e)}"
         logger.error(f"Задача {task_id}: {error_msg}")
@@ -21,7 +23,6 @@ def process_task_with_error_handling(task_id: str, input_path: Path, output_path
         # Очищаем временные файлы в случае ошибки
         input_path.unlink(missing_ok=True)
         output_path.unlink(missing_ok=True)
-
 @router.post("/upload/")
 async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     """
@@ -74,7 +75,11 @@ async def get_status(task_id: str):
         error_message = task_info.get("error_message", "Неизвестная ошибка при обработке файла")
         raise HTTPException(status_code=500, detail=error_message)
 
-    return {"task_id": task_id, "status": task_info["status"]}
+    return {
+        "task_id": task_id,
+        "status": task_info["status"],
+        "progress_percent": task_info.get("progress_percent", 0)
+    }
 
 @router.get("/download/{task_id}")
 async def download_file(task_id: str):

@@ -14,7 +14,8 @@ def create_task() -> str:
     processing_tasks[task_id] = {
         "status": "created",
         "input_file": str(input_file_path),
-        "output_file": str(output_file_path)
+        "output_file": str(output_file_path),
+        "progress_percent": 0
     }
     return task_id
 
@@ -30,6 +31,11 @@ def set_error_status(task_id: str, error_message: str = None):
         processing_tasks[task_id]["status"] = "error"
         if error_message:
             processing_tasks[task_id]["error_message"] = error_message
+
+def update_progress_percent(task_id: str, progress_percent: int):
+    """Обновляет процент выполнения задачи"""
+    if task_id in processing_tasks:
+        processing_tasks[task_id]["progress_percent"] = progress_percent
 
 
 def check_and_update_status(task_id: str):
