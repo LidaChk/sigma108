@@ -14,7 +14,7 @@
 - **Frontend:** React, Gravity UI
 - **Контейнеризация:** Docker
 - **CI/CD:** GitHub Actions
-- **Развёртывание:** Yandex Cloud
+- **Развёртывание:** [DockerHosting](https://dockerhosting.ru), GitHub Pages 
 - **ML:** Python, transformers, torch, pandas
 - **SLM:** ruBert-base (open source - [ruBert-base на Hugging Face](https://huggingface.co/ai-forever/ruBert-base) - trained by torch, peft, transformers, pandas)
 
