@@ -6,8 +6,6 @@
 
 **Видео:** [https://cloud.mail.ru/public/xcKe/UBnpmvgwz](https://cloud.mail.ru/public/xcKe/UBnpmvgwz)
 
-**Инструкция:** [instruction.md](instruction.md)
-
 ## Стек
 
 - **Backend:** Python, FastAPI
